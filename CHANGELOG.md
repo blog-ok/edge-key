@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.3.1 (2026-05-10)
+
+### Bug Fixes
+
+- **lint:** 规范项目编码，消除 18 处内联 `import()` 写法，统一改为顶部 `import type` ([370b975](https://github.com/34892002/edgeKey/commit/370b975))
+
 ## v1.3.0 (2026-05-10)
 
 ### Features
