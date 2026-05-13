@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { badRequestError } from "../../lib/app-error";
 import type { PaymentProviderAdapter } from "./provider";
+import { timingSafeStringEqual } from "./signature";
 
 interface EpayConfig {
   baseUrl: string;
@@ -73,7 +74,7 @@ export function createEpayAdapter(config: EpayConfig): PaymentProviderAdapter {
       const expected = signEpay(unsignedPayload, config.key);
       const tradeStatus = payload.trade_status || payload.status || "";
       const isPidMatched = payload.pid === config.pid;
-      const isSignatureMatched = signature === expected;
+      const isSignatureMatched = timingSafeStringEqual(signature, expected);
       const isValid = isPidMatched && isSignatureMatched;
 
       return {

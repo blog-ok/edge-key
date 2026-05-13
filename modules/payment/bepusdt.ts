@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { badRequestError, externalServiceError } from "../../lib/app-error";
 import { logger } from "../../lib/logger";
 import type { PaymentProviderAdapter } from "./provider";
+import { timingSafeStringEqual } from "./signature";
 
 interface BepusdtConfig {
   baseUrl: string;
@@ -95,14 +96,16 @@ export function createBepusdtAdapter(config: BepusdtConfig): PaymentProviderAdap
       const statusVal = String(payload.status);
       const status = statusVal === "2" ? "PAID" : statusVal === "3" ? "FAILED" : "PENDING";
 
+      const isSignatureMatched = timingSafeStringEqual(signature, expected);
+
       return {
-        isValid: signature === expected,
+        isValid: isSignatureMatched,
         orderNo: payload.order_id,
         paymentOrderNo: payload.trade_id,
         amount: payload.amount ? Math.round(Number(payload.amount) * 100) : undefined,
         status,
         raw: payload,
-        message: signature === expected ? "ok" : "invalid signature",
+        message: isSignatureMatched ? "ok" : "invalid signature",
       };
     },
   };

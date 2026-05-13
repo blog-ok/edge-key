@@ -483,6 +483,35 @@ export async function handlePaymentNotify(
     };
   }
 
+  if (order.paymentProvider !== provider) {
+    await createNotifyLog(prisma, {
+      orderId: order.id,
+      provider,
+      orderNo: verified.orderNo,
+      paymentOrderNo: verified.paymentOrderNo,
+      eventType: "NOTIFY_PROVIDER_MISMATCH",
+      rawPayload,
+      verifyStatus: "FAILED",
+      source,
+      message: `expected=${order.paymentProvider}, actual=${provider}`,
+      status: verified.status,
+    });
+
+    writePaymentNotifyDiagnostic({
+      provider,
+      source,
+      reason: "payment provider mismatch",
+      orderNo: verified.orderNo,
+      payload,
+    });
+
+    return {
+      ok: false,
+      status: verified.status,
+      message: "payment provider mismatch",
+    };
+  }
+
   if (verified.amount !== undefined && verified.amount !== order.amount) {
     await createNotifyLog(prisma, {
       orderId: order.id,

@@ -1,6 +1,7 @@
 import { externalServiceError } from "../../lib/app-error";
 import type { PaymentConfigValue } from "./types";
 import type { PaymentProviderAdapter, CreatePaymentInput, CreatePaymentResult, VerifyNotifyResult } from "./provider";
+import { timingSafeStringEqual } from "./signature";
 
 // Stripe zero-decimal currencies: amount is already in the smallest unit (no ×100 needed)
 const ZERO_DECIMAL_CURRENCIES = new Set([
@@ -76,7 +77,7 @@ export function createStripeAdapter(config: PaymentConfigValue): PaymentProvider
         .map((b) => b.toString(16).padStart(2, "0"))
         .join("");
 
-      if (expected !== v1) {
+      if (!timingSafeStringEqual(expected, v1)) {
         return { isValid: false, raw: payload, message: "Signature mismatch" };
       }
 
