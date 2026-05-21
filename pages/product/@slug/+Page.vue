@@ -25,11 +25,11 @@
             <div class="text-sm text-base-content/60">当前价格</div>
             <div class="text-3xl font-bold text-primary">{{ formatCents(product.price) }}</div>
           </div>
-          <dev class="flex">
+          <div class="flex">
               <!-- <div class="text-sm text-base-content/70">限购 {{ product.minBuy }} - {{ product.maxBuy }} 件</div> -->
               <div class="text-sm text-base-content/70">限购 {{ product.maxBuy }} 件，</div>
               <div class="text-sm text-base-content/70">发货方式：{{ getDeliveryTypeLabel(product.deliveryType) }}</div>
-          </dev>
+          </div>
           <div class="divider my-0"></div>
 
           <label class="flex flex-col gap-1.5">
